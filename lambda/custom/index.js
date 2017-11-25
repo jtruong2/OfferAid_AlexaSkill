@@ -38,15 +38,15 @@ let handlers = {
         this.emit(':ask', `Your donation consists of ${items}. It will be picked up at ${location} on ${date}. Is this correct?`)
     },
     'ConfirmationIntent' : function() {
-      // let confirmation = this.event.request.intent.slots.confirmation.value
-      // if(confirmation == 'Correct') {
-        Request.post(this.attributes)
-        setTimeout(() => {
-          this.emit(':tell', 'Your pickup has been scheduled')
-        }, 1000)
-      // } else if(confirmation == 'Incorrect') {
-      //   this.emit(':tell', 'Okay, I will cancel your request')
-      // }
+      Request.post(this.attributes).then((data) => {
+        this.emit(':tell', `Your pickup has been scheduled. Your confirmation number is <prosody rate="slow"><say-as interpret-as="digits">${data['confirmation']}</say-as></prosody>`)
+      })
+    },
+    'ItemCountIntent' : function() {
+      let total = Request.get()
+      total.then((data) => {
+        this.emit(':tell', `You've contributed ${data} items to date. Great <say-as interpret-as="expletive">flipping</say-as> Job`)
+      })
     },
     'AMAZON.StopIntent' : function() {
         this.response.speak('Bye');
